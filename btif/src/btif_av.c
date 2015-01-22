@@ -1,6 +1,7 @@
 /******************************************************************************
  *
  *  Copyright (C) 2009-2012 Broadcom Corporation
+ *  Copyright (C) 2015 Freescale Semiconductor, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -809,6 +810,10 @@ static BOOLEAN btif_av_state_started_handler(btif_sm_event_t event, void *p_data
             btif_report_connection_state(BTAV_CONNECTION_STATE_DISCONNECTED, &(btif_av_cb.peer_bda));
 
             btif_sm_change_state(btif_av_cb.sm_handle, BTIF_AV_STATE_IDLE);
+            break;
+
+        case BTA_AV_REMOTE_RSP_EVT:
+            btif_rc_handler(event, (tBTA_AV*)p_data);
             break;
 
         CHECK_RC_EVENT(event, p_data);
