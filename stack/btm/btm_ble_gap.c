@@ -1,6 +1,7 @@
 /******************************************************************************
  *
  *  Copyright (C) 2008-2014 Broadcom Corporation
+ *  Copyright (C) 2015 Freescale Semiconductor, Inc.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -3119,6 +3120,12 @@ BOOLEAN btm_ble_topology_check(tBTM_BLE_STATE_MASK request_state_mask)
     UINT8   mask, offset;
     UINT8   request_state = 0;
 
+#ifdef BOARD_USE_AR3K_BLUETOOTH
+    /*AR3k doesn't support BLE capibility read command so we hack it to support BLE*/
+    BTM_TRACE_WARNING("We will force enable BLE for AR3K");
+    if (request_state_mask == BTM_BLE_STATE_INIT)
+        return (TRUE);
+#endif
     /* check only one bit is set and within valid range */
     if (request_state_mask == BTM_BLE_STATE_INVALID ||
         request_state_mask > BTM_BLE_STATE_SCAN_ADV_BIT ||
