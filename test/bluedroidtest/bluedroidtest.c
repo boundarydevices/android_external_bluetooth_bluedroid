@@ -783,6 +783,34 @@ int main (int UNUSED argc, char UNUSED *argv[])
     char cmd[128];
     int args_processed = 0;
     int pid = -1;
+    bdt_log("sendrolon test start\n");
+    char prop[64];
+    memset(prop, 0, 64);
+    property_get("ro.boot.btdev", prop, "");
+    if (!strcmp(prop, "bcm4339")) {
+        bdt_log("we got bcm4339\n");
+    } else {
+        bdt_log("unknown bdev = %s", prop);
+    }
+
+#if 0
+    FILE *f = NULL;
+    char linebuf[2048];
+    f = fopen("/proc/cmdline", "r");
+    if (f) {
+        if (fgets(linebuf, sizeof(linebuf) - 1, f)) {
+            bdt_log(linebuf);
+            if (strstr(linebuf, "btdev=bcm4339")) {
+                bdt_log("we got btdev=bcm4339\n");
+            }
+            if (strstr(linebuf, "btdev=ar3k")) {
+                bdt_log("we got btdev=ar3k\n");
+            }
+
+        }
+        fclose(f);
+    }
+#endif       
 
     config_permissions();
     bdt_log("\n:::::::::::::::::::::::::::::::::::::::::::::::::::");

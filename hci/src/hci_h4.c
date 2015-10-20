@@ -989,6 +989,7 @@ uint8_t hci_h4_send_int_cmd(uint16_t opcode, HC_BT_HDR *p_buf, \
     h4_cb.int_cmd[h4_cb.int_cmd_wrt_idx].cback = p_cback;
     h4_cb.int_cmd_wrt_idx = ((h4_cb.int_cmd_wrt_idx+1) & INT_CMD_PKT_IDX_MASK);
 
+
     /* stamp signature to indicate an internal command */
     p_buf->layer_specific = opcode;
 

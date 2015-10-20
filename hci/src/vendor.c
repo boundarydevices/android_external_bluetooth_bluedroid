@@ -33,6 +33,9 @@ extern bool fwcfg_acked;
 void lpm_vnd_cback(uint8_t vnd_result);
 
 static const char *VENDOR_LIBRARY_NAME = "libbt-vendor.so";
+static const char *VENDOR_LIBRARY_NAME_BCM = "libbt-vendor-broadcom.so";
+static const char *VENDOR_LIBRARY_NAME_AR3K = "libbt-vendor-ar3k.so";
+static char *VENDOR_LIB_PROP_NAME = "ro.boot.btdev";
 static const char *VENDOR_LIBRARY_SYMBOL_NAME = "BLUETOOTH_VENDOR_LIB_INTERFACE";
 
 static void *lib_handle;
@@ -46,6 +49,7 @@ static void *buffer_alloc(int size);
 static void buffer_free(void *buffer);
 static uint8_t transmit_cb(uint16_t opcode, void *buffer, tINT_CMD_CBACK callback);
 static void epilog_cb(bt_vendor_op_result_t result);
+static const char *get_vendor_lib();
 
 static const bt_vendor_callbacks_t vendor_callbacks = {
   sizeof(vendor_callbacks),
@@ -59,10 +63,27 @@ static const bt_vendor_callbacks_t vendor_callbacks = {
   epilog_cb
 };
 
+static const char *get_vendor_lib() {
+
+    char prop[64];
+    memset(prop, 0, 64);
+    property_get(VENDOR_LIB_PROP_NAME, prop, "");
+    if (!strcmp(prop, "bcm4339")) {
+        ALOGD("Select bcm4339 bt-vendor");
+        return VENDOR_LIBRARY_NAME_BCM;
+    } else if (!strcmp(prop, "ar3k")) {
+        ALOGD("Select ar3k bt-vendor");
+        return VENDOR_LIBRARY_NAME_AR3K;
+    } else {
+        ALOGW("%s is %s and no mapped bt-vendor", VENDOR_LIB_PROP_NAME, prop);
+        return VENDOR_LIBRARY_NAME_BCM;
+    }
+
+}
 bool vendor_open(const uint8_t *local_bdaddr) {
   assert(lib_handle == NULL);
 
-  lib_handle = dlopen(VENDOR_LIBRARY_NAME, RTLD_NOW);
+  lib_handle = dlopen(get_vendor_lib(), RTLD_NOW);
   if (!lib_handle) {
     ALOGE("%s unable to open %s: %s", __func__, VENDOR_LIBRARY_NAME, dlerror());
     goto error;
