@@ -76,7 +76,7 @@ static const char *get_vendor_lib() {
         return VENDOR_LIBRARY_NAME_AR3K;
     } else {
         ALOGW("%s is %s and no mapped bt-vendor", VENDOR_LIB_PROP_NAME, prop);
-        return VENDOR_LIBRARY_NAME_BCM;
+        return VENDOR_LIBRARY_NAME;
     }
 
 }
